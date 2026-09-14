@@ -1,0 +1,13 @@
+bundle:
+  name: fis-ticket-analytics
+
+resources:
+  dashboards:
+    fis-ticket-analytics:
+      display_name: "FIS Ticket Analytics"
+      file_path: src/dashboard.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+
+variables:
+  warehouse_id:
+    description: SQL warehouse ID for the dashboard

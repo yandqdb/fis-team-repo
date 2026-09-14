@@ -1,0 +1,291 @@
+{
+  "datasets": [
+    {
+      "name": "datasets/fis_ticket_analytics",
+      "displayName": "FIS Ticket Analytics",
+      "metricViewConfig": "version: '1.1'\nsource: serverless_stable_l26d62_catalog.fis_knowledge_agent.rd_tasks_gold_analytics\ndimensions:\n  - name: task_number\n    expr: task_number\n    comment: R&D task ID\n  - name: title\n    expr: title\n    comment: Short description of the task/issue\n  - name: priority_label\n    expr: priority_label\n    comment: \"Text priority: Critical/High/Moderate/Low\"\n  - name: status\n    expr: status\n    comment: \"Open, Pending, Closed Complete, Closed Skipped, Closed Incomplete\"\n  - name: workflow_status\n    expr: workflow_status\n    comment: \"Draft, Assigned, Work in progress, Completed\"\n  - name: is_closed\n    expr: is_closed\n    comment: TRUE if status starts with Closed\n  - name: assigned_to\n    expr: assigned_to\n    comment: R&D team member who owns the task\n  - name: location_state\n    expr: location_state\n    comment: 2-letter US state / Canadian province\n  - name: location_site\n    expr: location_site\n    comment: Site name\n  - name: problem_category\n    expr: problem_category\n    comment: \"hardware_failure, software_crash, network_connectivity, calibration, etc.\"\n  - name: resolution_type\n    expr: resolution_type\n    comment: \"hardware_replace, software_patch, recalibration, config_change, etc.\"\n  - name: needs_review\n    expr: needs_review\n    comment: TRUE if enrichment confidence was low\nmeasures:\n  - name: ticket_count\n    expr: COUNT(1)\n    comment: Total number of tickets\n  - name: avg_duration_days\n    expr: AVG(duration_days)\n    comment: Average days to resolve\n    format:\n      type: number\n      decimal_places:\n        type: exact\n        places: 1\n  - name: open_tickets\n    expr: COUNT(1) FILTER (WHERE is_closed = false)\n    comment: Number of open tickets\n  - name: closed_tickets\n    expr: COUNT(1) FILTER (WHERE is_closed = true)\n    comment: Number of closed tickets\n"
+    }
+  ],
+  "pages": [
+    {
+      "name": "pages/7a1784f1",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/total_tickets",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "measure(ticket_count)", "expression": "MEASURE(`ticket_count`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Total Tickets", "fields": []}},
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "measure(ticket_count)", "rowNumber": 0}},
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 0, "y": 0, "width": 4, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/open_tickets",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "measure(open_tickets)", "expression": "MEASURE(`open_tickets`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Open Tickets", "fields": []}},
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "measure(open_tickets)", "rowNumber": 0}},
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 4, "y": 0, "width": 4, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/avg_resolution_days",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "measure(avg_duration_days)", "expression": "MEASURE(`avg_duration_days`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Avg Resolution Days", "fields": []}},
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {"value": {"fieldName": "measure(avg_duration_days)", "rowNumber": 0}},
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 8, "y": 0, "width": 4, "height": 2}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/tickets_by_priority",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "priority_label", "expression": "`priority_label`"},
+                    {"name": "measure(ticket_count)", "expression": "MEASURE(`ticket_count`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Tickets by Priority", "fields": []}},
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "priority_label", "displayName": "priority_label", "scale": {"type": "categorical"}},
+                "y": {"fieldName": "measure(ticket_count)", "displayName": "ticket_count", "scale": {"type": "quantitative"}},
+                "color": {"fieldName": "priority_label", "displayName": "priority_label", "scale": {"type": "categorical"}}
+              },
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 0, "y": 2, "width": 6, "height": 4}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/tickets_by_status",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "status", "expression": "`status`"},
+                    {"name": "measure(ticket_count)", "expression": "MEASURE(`ticket_count`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Tickets by Status", "fields": []}},
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "status", "displayName": "status", "scale": {"type": "categorical"}},
+                "y": {"fieldName": "measure(ticket_count)", "displayName": "ticket_count", "scale": {"type": "quantitative"}},
+                "color": {"fieldName": "status", "displayName": "status", "scale": {"type": "categorical"}}
+              },
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 6, "y": 2, "width": 6, "height": 4}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/tickets_by_problem_category",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "problem_category", "expression": "`problem_category`"},
+                    {"name": "measure(ticket_count)", "expression": "MEASURE(`ticket_count`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Tickets by Problem Category", "fields": []}},
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "problem_category", "displayName": "problem_category", "scale": {"type": "categorical"}},
+                "y": {"fieldName": "measure(ticket_count)", "displayName": "ticket_count", "scale": {"type": "quantitative"}},
+                "color": {"fieldName": "problem_category", "displayName": "problem_category", "scale": {"type": "categorical"}}
+              },
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 0, "y": 6, "width": 6, "height": 4}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/resolution_types",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "measure(ticket_count)", "expression": "MEASURE(`ticket_count`)"},
+                    {"name": "resolution_type", "expression": "`resolution_type`"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Resolution Types", "fields": []}},
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {"fieldName": "measure(ticket_count)", "scale": {"type": "quantitative"}, "displayName": "ticket_count"},
+                "color": {"fieldName": "resolution_type", "displayName": "resolution_type", "scale": {"type": "categorical"}}
+              },
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 6, "y": 6, "width": 6, "height": 4}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/tickets_by_state",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "location_state", "expression": "`location_state`"},
+                    {"name": "measure(ticket_count)", "expression": "MEASURE(`ticket_count`)"}
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Tickets by State", "fields": []}},
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {"fieldName": "location_state", "displayName": "location_state", "scale": {"type": "categorical"}},
+                "y": {"fieldName": "measure(ticket_count)", "displayName": "ticket_count", "scale": {"type": "quantitative"}},
+                "color": {"fieldName": "location_state", "displayName": "location_state", "scale": {"type": "categorical"}}
+              },
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 0, "y": 10, "width": 6, "height": 4}
+        },
+        {
+          "widget": {
+            "name": "pages/7a1784f1/widgets/ticket_details",
+            "textbox_spec": null,
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "datasets/fis_ticket_analytics",
+                  "fields": [
+                    {"name": "task_number", "expression": "`task_number`"},
+                    {"name": "title", "expression": "`title`"},
+                    {"name": "priority_label", "expression": "`priority_label`"},
+                    {"name": "status", "expression": "`status`"},
+                    {"name": "assigned_to", "expression": "`assigned_to`"},
+                    {"name": "problem_category", "expression": "`problem_category`"},
+                    {"name": "resolution_type", "expression": "`resolution_type`"}
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {"showTitle": true, "title": {"value": "Ticket Details", "fields": []}},
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {"fieldName": "task_number"},
+                  {"fieldName": "title"},
+                  {"fieldName": "priority_label"},
+                  {"fieldName": "status"},
+                  {"fieldName": "assigned_to"},
+                  {"fieldName": "problem_category"},
+                  {"fieldName": "resolution_type"}
+                ]
+              },
+              "data": {"queryName": "main_query"}
+            }
+          },
+          "position": {"x": 0, "y": 14, "width": 12, "height": 5}
+        }
+      ]
+    }
+  ]
+}
